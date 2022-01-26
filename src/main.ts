@@ -5,7 +5,7 @@ import { TrimPipe } from './common/trim.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new TrimPipe());
+  // app.useGlobalPipes(new TrimPipe());
   await app.listen(config.port);
 }
 bootstrap();

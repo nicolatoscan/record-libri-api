@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
+import { LibraryDTO } from 'src/types/dto';
 import { LibrariesService } from './libraries.service';
 
 @Controller('libraries')
@@ -11,8 +12,9 @@ export class LibrariesController {
     }
 
     @Post()
-    async add(@Body('code') code: string) {
-        return this.librariesService.add(code, code);
+    async add(@Body() l: LibraryDTO) {
+        console.log(l);
+        return 'ciao';
     }
 
 }

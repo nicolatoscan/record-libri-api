@@ -3,6 +3,8 @@ import { Reflector } from '@nestjs/core';
 import { Role } from './role.enum';
 import { ROLES_KEY } from './roles.decorator';
 
+
+
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) { }
@@ -16,6 +18,8 @@ export class RolesGuard implements CanActivate {
             return true;
         }
         const { user } = context.switchToHttp().getRequest();
-        return user?.role && requiredRoles.some((role) => user.role >= role);
+        const res = user?.role && requiredRoles.some((role) => user.role >= role);
+        console.log(user);
+        return res;
     }
 }

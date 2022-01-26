@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Role } from 'src/auth/role.enum';
 import * as bcrypt from 'bcrypt';
 import prisma from '../common/prisma';
-import { Users, Roles } from '@prisma/client';
+import { Users } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +19,7 @@ export class UsersService {
         return prisma.users.findFirst({ where: { username: username }})
     }
 
-    async addUser(username: string, password: string, role: Roles) {
+    async addUser(username: string, password: string, role: Role) {
         const r = await prisma.users.create({
             data: {
                 username: username,
@@ -28,6 +28,15 @@ export class UsersService {
             }
         });
         return r.id;
+    }
+
+    getRoles(): { [id: string]: number } {
+        return {
+            'User':  Role.User,
+            'Supervisor':  Role.Supervisor,
+            'Admin':  Role.Admin,
+            'SuperAdmin':  Role.SuperAdmin,
+        };
     }
 
     // async getUsers(): Promise<User[]> {

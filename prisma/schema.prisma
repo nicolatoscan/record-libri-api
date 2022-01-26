@@ -14,6 +14,11 @@ model Users {
   role     Int
 }
 
+model Library {
+  code String @id @db.VarChar(50)
+  name String @db.VarChar(100)
+}
+
 enum Roles {
   Readonly
   User

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from 'src/auth/role.enum';
+import { Role } from '../auth/role.enum';
 import * as bcrypt from 'bcrypt';
-import prisma from '../common/prisma';
+import prisma from '../../common/prisma';
 import { Users } from '@prisma/client';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class UsersService {
         return prisma.users.findFirst({ where: { username: username }})
     }
 
-    async addUser(username: string, password: string, role: Role) {
+    async add(username: string, password: string, role: Role) {
         const r = await prisma.users.create({
             data: {
                 username: username,

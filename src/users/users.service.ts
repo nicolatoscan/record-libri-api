@@ -1,50 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { Role } from 'src/auth/role.enum';
 import * as bcrypt from 'bcrypt';
-
-export type User = {
-    userId: number;
-    username: string;
-    password: string;
-    role: Role;
-}
-
-
+import prisma from '../common/prisma';
+import { Users, Roles } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-    private users: User[] = [ ];
 
-    async getPassword(password: string): Promise<string> {
+    private async getHashedPassword(password: string): Promise<string> {
         return await bcrypt.hash(password, 10);
     }
 
-    async getUsers(): Promise<User[]> {
-        return [
-            {
-                userId: 1,
-                username: 'john',
-                password: await this.getPassword('changeme'),
-                role: Role.Admin,
-            },
-            {
-                userId: 2,
-                username: 'maria',
-                password: await this.getPassword('guess'),
-                role: Role.User,
-            },
-        ];
+    async getUsers(): Promise<Users[]> {
+        return prisma.users.findMany();
     }
 
-    constructor() {
-        new Promise(async () => {
-            this.users = await this.getUsers();
-            console.log(this.users);
-        })
+    async getUserByUsername(username: string): Promise<Users> {
+        return prisma.users.findFirst({ where: { username: username }})
     }
 
-
-    async findOne(username: string): Promise<User | undefined> {
-        return this.users.find(user => user.username === username);
+    async addUser(username: string, password: string, role: Roles) {
+        const r = await prisma.users.create({
+            data: {
+                username: username,
+                password: await this.getHashedPassword(password),
+                role: role,
+            }
+        });
+        return r.id;
     }
+
+    // async getUsers(): Promise<User[]> {
+    //     return [
+    //         {
+    //             userId: 1,
+    //             username: 'admin',
+    //             password: await this.getPassword('admin'),
+    //             role: Role.Admin,
+    //         },
+    //         {
+    //             userId: 2,
+    //             username: 'user',
+    //             password: await this.getPassword('user'),
+    //             role: Role.User,
+    //         },
+    //     ];
+    // }
 }

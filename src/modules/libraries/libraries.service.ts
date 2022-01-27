@@ -1,35 +1,31 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import prisma from '../../common/prisma';
-import { Library } from '@prisma/client';
-import Joi from 'joi';
+import * as Joi from 'joi';
 import { LibraryDTO } from 'src/types/dto';
+import { APIService } from '../api.service';
 
 @Injectable()
-export class LibrariesService {
+export class LibrariesService extends APIService {
 
-x
-    private validate(l: LibraryDTO) {
+    private validate(l: LibraryDTO, throwError = false): string | null {
         const schema = Joi.object({
             code: Joi.string().required().min(2).max(50),
             name: Joi.string().required().min(2).max(100)
         });
-        const res = schema.validate(l);
-        if (res.error) {
-            throw new BadRequestException(res.error);
-        }
+        return this.validateSchema(schema, l, throwError);
     }
 
     getAll() {
         return prisma.library.findMany();
     }
 
-    async add(l: LibraryDTO) {
-        this.validate(l);
+    async add(l: LibraryDTO): Promise<string | null> {
+        this.validate(l, true);
 
-        const r = await prisma.library.create({ data: { code: l.code, name: l.name } });
-        return r.code;
+        return await this.prismaHandler(async () => {
+            const r = await prisma.library.create({ data: { code: l.code, name: l.name } });
+            return r.code;
+        })
     }
-
-
 
 }

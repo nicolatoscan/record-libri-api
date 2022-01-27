@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common';
 import { LibraryDTO } from 'src/types/dto';
 import { LibrariesService } from './libraries.service';
 
@@ -13,8 +13,8 @@ export class LibrariesController {
 
     @Post()
     async add(@Body() l: LibraryDTO) {
-        console.log(l);
-        return 'ciao';
+        const code = await this.librariesService.add(l);
+        return { code };
     }
 
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import prisma from '../../common/prisma';
 import * as Joi from 'joi';
 import { LibraryDTO } from 'src/types/dto';

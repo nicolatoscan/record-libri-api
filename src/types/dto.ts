@@ -4,7 +4,8 @@ export interface LibraryDTO {
 }
 
 export interface UserDTO {
+    id: number;
     username: string;
     role: number;
-    id: number;
+    token?: string;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { LibraryDTO } from 'src/types/dto';
 import { LibrariesService } from './libraries.service';
 

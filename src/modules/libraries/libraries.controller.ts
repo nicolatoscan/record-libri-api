@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { LibraryDTO } from 'src/types/dto';
-import { Public } from '../auth/public.decorator';
 import { LibrariesService } from './libraries.service';
 
 @Controller('libraries')
@@ -21,7 +20,7 @@ export class LibrariesController {
 
     @Patch(':code')
     async patch(@Param('code') code: string, @Body() l: LibraryDTO) {
-        const newCode = await this.librariesService.patch(code, l);
+        const newCode = await this.librariesService.update(code, l);
         return { code: newCode };
     }
 

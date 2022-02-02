@@ -28,7 +28,7 @@ export class LibrariesService extends APIService {
         })
     }
 
-    async patch(code: string, l: LibraryDTO): Promise<string | null> {
+    async update(code: string, l: LibraryDTO): Promise<string | null> {
         this.validate(l, true);
 
         return await this.prismaHandler(async () => {

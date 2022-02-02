@@ -15,8 +15,8 @@ export class LibrariesService extends APIService {
         return this.validateSchema(schema, l, throwError);
     }
 
-    getAll() {
-        return prisma.library.findMany();
+    async getAll() {
+        return await prisma.library.findMany();
     }
 
     async add(l: LibraryDTO): Promise<string | null> {
@@ -25,6 +25,25 @@ export class LibrariesService extends APIService {
         return await this.prismaHandler(async () => {
             const r = await prisma.library.create({ data: { code: l.code, name: l.name } });
             return r.code;
+        })
+    }
+
+    async patch(code: string, l: LibraryDTO): Promise<string | null> {
+        this.validate(l, true);
+
+        return await this.prismaHandler(async () => {
+            const r = await prisma.library.update({
+                where: { code: code },
+                data: { code: l.code, name: l.name }
+            });
+            return r.code;
+        })
+    }
+
+    async delete(code: string): Promise<boolean> {
+        return await this.prismaHandler(async () => {
+            const r = await prisma.library.delete({ where: { code: code } });
+            return r.code === code;
         })
     }
 

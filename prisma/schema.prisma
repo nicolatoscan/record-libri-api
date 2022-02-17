@@ -14,9 +14,10 @@ model Users {
   role     Int
 }
 
-model Library {
-  code String @id @db.VarChar(50)
-  name String @db.VarChar(100)
+model Libraries {
+  id   Int    @id @default(autoincrement())
+  code String @db.VarChar(50)
+  name String @db.VarChar(250)
 }
 
 enum Roles {

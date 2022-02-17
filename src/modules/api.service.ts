@@ -16,6 +16,9 @@ export class APIService {
         try {
             return await fn();
         } catch (e) {
+            //TODO: remove this log
+            console.log(e);
+            
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 switch (e.code) {
                     case 'P2000': throw new BadRequestException('The provided value for the column is too long for the column\'s type');

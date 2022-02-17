@@ -13,20 +13,19 @@ export class LibrariesController {
 
     @Post()
     async add(@Body() l: LibraryDTO) {
-        console.log(l);
         const code = await this.librariesService.add(l);
         return { code };
     }
 
-    @Patch(':code')
-    async patch(@Param('code') code: string, @Body() l: LibraryDTO) {
-        const newCode = await this.librariesService.update(code, l);
+    @Patch(':id')
+    async patch(@Param('id') id: string, @Body() l: LibraryDTO) {
+        const newCode = await this.librariesService.update(+id, l);
         return { code: newCode };
     }
 
-    @Delete(':code')
-    async delete(@Param('code') code: string) {
-        const deleted = await this.librariesService.delete(code);
+    @Delete(':id')
+    async delete(@Param('id') id: string) {
+        const deleted = await this.librariesService.delete(+id);
         return { code: deleted };
     }
 

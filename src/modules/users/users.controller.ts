@@ -22,7 +22,7 @@ export class UsersController {
     }
 
     @Get()
-    async getUsers() {
+    async getAll() {
         return await this.usersService.getUsers();
     }
 
@@ -49,7 +49,7 @@ export class UsersController {
     @Patch('update-password/:id')
     async updatePassword(@Param('id') id: number, @Body() password: { password: string}) {
         return await this.usersService.updatePassword(id, password.password);
-    }user
+    }
 
     @Delete(':id')
     async delete(@Param('id') id: number) {

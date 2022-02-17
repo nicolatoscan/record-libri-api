@@ -9,6 +9,7 @@ export class LibrariesService extends APIService {
 
     private validate(l: LibraryDTO, throwError = false): string | null {
         const schema = Joi.object({
+            id: Joi.number().integer().min(1),
             code: Joi.string().required().min(2).max(50),
             name: Joi.string().required().min(2).max(100)
         });
@@ -16,34 +17,34 @@ export class LibrariesService extends APIService {
     }
 
     async getAll() {
-        return await prisma.library.findMany();
+        return await prisma.libraries.findMany();
     }
 
     async add(l: LibraryDTO): Promise<string | null> {
         this.validate(l, true);
 
         return await this.prismaHandler(async () => {
-            const r = await prisma.library.create({ data: { code: l.code, name: l.name } });
-            return r.code;
+            const r = await prisma.libraries.create({ data: { code: l.code, name: l.name } });
+            return r.id;
         })
     }
 
-    async update(code: string, l: LibraryDTO): Promise<string | null> {
+    async update(id: number, l: LibraryDTO): Promise<string | null> {
         this.validate(l, true);
 
         return await this.prismaHandler(async () => {
-            const r = await prisma.library.update({
-                where: { code: code },
+            const r = await prisma.libraries.update({
+                where: { id: id },
                 data: { code: l.code, name: l.name }
             });
-            return r.code;
+            return r.id;
         })
     }
 
-    async delete(code: string): Promise<boolean> {
+    async delete(id: number): Promise<boolean> {
         return await this.prismaHandler(async () => {
-            const r = await prisma.library.delete({ where: { code: code } });
-            return r.code === code;
+            const r = await prisma.libraries.delete({ where: { id: id } });
+            return r.id === id;
         })
     }
 

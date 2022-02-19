@@ -11,3 +11,8 @@ export interface UserDTO {
     role: number;
     token?: string;
 }
+
+export interface RecordTypeDTO {
+    id: number;
+    name: string;
+}

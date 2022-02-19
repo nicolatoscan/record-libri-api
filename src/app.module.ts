@@ -6,10 +6,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/roles.guard';
 import { LibrariesModule } from './modules/libraries/libraries.module';
+import { RecordTypesModule } from './modules/record-types/record-types.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, LibrariesModule],
+  imports: [AuthModule, UsersModule, LibrariesModule, RecordTypesModule],
   controllers: [AppController],
   providers: [
     AppService,

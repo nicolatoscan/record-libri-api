@@ -7,11 +7,20 @@ import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/roles.guard';
 import { LibrariesModule } from './modules/libraries/libraries.module';
 import { RecordTypesModule } from './modules/record-types/record-types.module';
+import { RecordsModule } from './modules/records/records.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, LibrariesModule, RecordTypesModule],
-  controllers: [AppController],
+  imports: [
+    AuthModule,
+    UsersModule,
+    LibrariesModule,
+    RecordTypesModule,
+    RecordsModule
+  ],
+  controllers: [
+    AppController
+  ],
   providers: [
     AppService,
     { provide: APP_GUARD, useClass: JwtAuthGuard },

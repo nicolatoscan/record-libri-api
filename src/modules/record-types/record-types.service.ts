@@ -16,7 +16,7 @@ export class RecordTypesService extends APIService {
         return this.validateSchema(schema, r, throwError);
     }
 
-    async getAll(): Promise<RecordType[]> {
+    async getAll(): Promise<RecordTypeDTO[]> {
         return await this.prismaHandler(async () => {
             return prisma.recordTypes.findMany();
         });
@@ -26,26 +26,26 @@ export class RecordTypesService extends APIService {
         this.validate(type, true);
 
         return await this.prismaHandler(async () => {
-            const r = await prisma.recordTypes.create({ data: { name: type.name } });
-            return r.id;
+            const t = await prisma.recordTypes.create({ data: { name: type.name } });
+            return t.id;
         });
     }
 
     async update(id: number, type: RecordTypeDTO) {
         this.validate(type, true);
         return await this.prismaHandler(async () => {
-            const u = await prisma.recordTypes.update({
+            const t = await prisma.recordTypes.update({
                 where: { id: id },
                 data: { name: type.name }
             });
-            return u.id;
+            return t.id;
         });
     }
 
     async delete(id: number) {
         return await this.prismaHandler(async () => {
-            const u = await prisma.recordTypes.delete({ where: { id: id }});
-            return u.id;
+            const t = await prisma.recordTypes.delete({ where: { id: id }});
+            return t.id;
         });
     }
 

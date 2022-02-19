@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import prisma from '../../common/prisma';
-import { Records } from '@prisma/client';
+import { Records, RecordType } from '@prisma/client';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
 import { RecordDTO } from 'src/types/dto';
 
+
 @Injectable()
 export class RecordsService extends APIService {
+
+    private recordTypesList = Object.keys(RecordType);
 
     private validate(r: RecordDTO, throwError = false): string | null {
         const schema = Joi.object({
@@ -16,8 +19,10 @@ export class RecordsService extends APIService {
             typeId: Joi.number().integer().min(1).required(),
             authorName: Joi.string().min(2).max(250),
             fly: Joi.boolean().required(),
-            recordType: Joi.string().required() //TODO: fix this
+            recordType: Joi.string().required().valid(...this.recordTypesList)
         });
+
+        r.number = +r.number;
         return this.validateSchema(schema, r, throwError);
     }
 
@@ -42,6 +47,10 @@ export class RecordsService extends APIService {
             libraryId: record.libraryId,
             typeId: record.typeId,
         }
+    }
+
+    getTypes(): string[] {
+        return [ ...this.recordTypesList ];
     }
 
     async getAll(): Promise<RecordDTO[]> {

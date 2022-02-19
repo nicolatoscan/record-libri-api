@@ -20,7 +20,7 @@ export interface RecordTypeDTO {
 }
 
 export interface RecordDTO {
-    id: number;
+    id?: number;
     number: number;
     libraryId: number;
     typeId: number;

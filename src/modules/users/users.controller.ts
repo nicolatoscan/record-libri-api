@@ -42,18 +42,18 @@ export class UsersController {
     }
 
     @Patch(':id')
-    async patch(@Param('id') id: number, @Body() user: UserDTO) {
-        return await this.usersService.update(id, user);
+    async patch(@Param('id') id: string, @Body() user: UserDTO) {
+        return await this.usersService.update(+id, user);
     }
 
     @Patch('update-password/:id')
-    async updatePassword(@Param('id') id: number, @Body() password: { password: string}) {
-        return await this.usersService.updatePassword(id, password.password);
+    async updatePassword(@Param('id') id: string, @Body() password: { password: string}) {
+        return await this.usersService.updatePassword(+id, password.password);
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: number) {
-        return await this.usersService.delete(id);
+    async delete(@Param('id') id: string) {
+        return await this.usersService.delete(+id);
     }
 
 

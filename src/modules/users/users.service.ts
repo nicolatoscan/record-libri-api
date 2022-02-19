@@ -13,10 +13,10 @@ export class UsersService extends APIService {
     private validate(l: UserDTO, isUpdate: boolean, throwError = false): string | null {
         const roles = Object.values(this.getRoles());
         const schema = Joi.object({
-            id: isUpdate ? undefined : Joi.number().integer().min(1).required(),
+            id: isUpdate ? Joi.number().integer().min(1) : Joi.number().integer().min(1).required(),
             username: Joi.string().required().min(2).max(120),
-            password: isUpdate ? undefined : Joi.string().required().min(8).max(120),
-            role: Joi.number().integer().required().valid(roles),
+            password: isUpdate ? Joi.string().min(8).max(120) : Joi.string().min(8).max(120).required(),
+            role: Joi.number().integer().required().valid(...roles),
         });
         return this.validateSchema(schema, l, throwError);
     }
@@ -69,7 +69,6 @@ export class UsersService extends APIService {
 
     async update(id: number, user: UserDTO) {
         this.validate(user, true, true);
-
         return await this.prismaHandler(async () => {
             const u = await prisma.users.update({
                 where: { id: id },

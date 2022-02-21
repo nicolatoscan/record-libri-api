@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Users {
-  username String @db.VarChar(120)
-  password String @db.VarChar(120)
-  id       Int    @id @default(autoincrement())
+  username String    @db.VarChar(120)
+  password String    @db.VarChar(120)
+  id       Int       @id @default(autoincrement())
   role     Int
+  Records  Records[]
 }
 
 model Libraries {
@@ -35,6 +36,9 @@ model Records {
   fly         Boolean
   typeId      Int
   recordType  RecordType?
+  addedById   Int
+  dateAdded   DateTime    @db.Date
+  Users       Users       @relation(fields: [addedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Libraries   Libraries   @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   RecordTypes RecordTypes @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

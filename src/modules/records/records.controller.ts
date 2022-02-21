@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request } from '@nestjs/common';
 import { RecordDTO } from 'src/types/dto';
 import { RecordsService } from './records.service';
 
@@ -14,6 +14,11 @@ export class RecordsController {
     @Get()
     async getAll() {
         return await this.recordsService.getAll();
+    }
+
+    @Get('mine')
+    async getMine(@Request() req) {
+        return await this.recordsService.getMine(req.user?.id);
     }
 
     @Get(':id')

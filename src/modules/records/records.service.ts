@@ -34,7 +34,9 @@ export class RecordsService extends APIService {
             typeId: r.typeId,
             authorName: r.authorName,
             fly: r.fly,
-            recordType: r.recordType
+            recordType: r.recordType,
+            addedById: r.addedById,
+            dateAdded: r.dateAdded,
         };
     }
 
@@ -60,6 +62,17 @@ export class RecordsService extends APIService {
         return records.map(r => this.mapRecordToDTO(r));
     }
 
+    async getMine(userId: number): Promise<RecordDTO[]> {
+        if (!userId || userId <= 0) return [];
+
+        const records = await this.prismaHandler(async () => {
+            return await prisma.records.findMany({
+                where: { addedById: userId }
+            });
+        });
+        return records.map(r => this.mapRecordToDTO(r));
+    }
+
     async getById(id: number): Promise<RecordDTO> {
         const record = await this.prismaHandler(async () => {
             return await prisma.records.findUnique({ where: { id: id } });
@@ -67,12 +80,16 @@ export class RecordsService extends APIService {
         return this.mapRecordToDTO(record);
     }
 
-    async add(record: RecordDTO) {
+    async add(record: RecordDTO, userId: number) {
         this.validate(record, true);
 
         return await this.prismaHandler(async () => {
             const r = await prisma.records.create({
-                data: this.mapDTOToRecord(record)
+                data: {
+                    ...this.mapDTOToRecord(record),
+                    addedById: userId,
+                    dateAdded: new Date(),
+                }
             });
             return r.id;
         });

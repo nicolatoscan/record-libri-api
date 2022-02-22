@@ -27,8 +27,8 @@ export class RecordsController {
     }
 
     @Post()
-    async add(@Body() record: RecordDTO) {
-        return await this.recordsService.add(record);
+    async add(@Request() req, @Body() record: RecordDTO) {
+        return await this.recordsService.add(record, req.user?.id);
     }
 
     @Patch(':id')

@@ -10,8 +10,8 @@ export class LibrariesService extends APIService {
     private validate(l: LibraryDTO, throwError = false): string | null {
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
-            code: Joi.string().required().min(2).max(50),
-            name: Joi.string().required().min(2).max(100)
+            code: Joi.string().required().min(1).max(50),
+            name: Joi.string().required().min(1).max(100)
         });
         return this.validateSchema(schema, l, throwError);
     }

@@ -13,12 +13,17 @@ export class UsersService extends APIService {
     private validate(l: UserDTO, isUpdate: boolean, throwError = false): string | null {
         const roles = Object.values(this.getRoles());
         const schema = Joi.object({
-            id: isUpdate ? Joi.number().integer().min(1) : Joi.number().integer().min(1).required(),
-            username: Joi.string().required().min(2).max(120),
+            id: Joi.number().integer().min(1),
+            username: Joi.string().required().min(1).max(120),
             password: isUpdate ? Joi.string().min(8).max(120) : Joi.string().min(8).max(120).required(),
             role: Joi.number().integer().required().valid(...roles),
         });
         return this.validateSchema(schema, l, throwError);
+    }
+
+    private deletePassword(u: Users) {
+        u.password = '';
+        return u;
     }
 
     getRoles(): { [id: string]: number } {
@@ -35,21 +40,24 @@ export class UsersService extends APIService {
     }
 
     async getUsers(): Promise<Users[]> {
-        return await this.prismaHandler(async () => {
+        const users: Users[] = await this.prismaHandler(async () => {
             return prisma.users.findMany();
         });
+        return users.map(u => this.deletePassword(u));
     }
 
-    async getUserByUsername(username: string): Promise<Users> {
-        return await this.prismaHandler(async () => {
+    async getUserByUsername(username: string, keepPassword = false): Promise<Users> {
+        const u: Users = await this.prismaHandler(async () => {
             return prisma.users.findFirst({ where: { username: username }})
         });
+        return keepPassword ? u : this.deletePassword(u);
     }
 
     async getUserById(id: number): Promise<Users> {
-        return await this.prismaHandler(async () => {
+        const u: Users =  await this.prismaHandler(async () => {
             return prisma.users.findFirst({ where: { id: id }})
         });
+        return this.deletePassword(u);
     }
 
     async add(user: UserDTO) {
@@ -69,12 +77,16 @@ export class UsersService extends APIService {
 
     async update(id: number, user: UserDTO) {
         this.validate(user, true, true);
+
+        console.log(user);
+
         return await this.prismaHandler(async () => {
             const u = await prisma.users.update({
                 where: { id: id },
                 data: {
                     username: user.username,
                     role: user.role,
+                    ...(user.password ? { password: await this.getHashedPassword(user.password) } : {})
                 }
             });
             return u.id;

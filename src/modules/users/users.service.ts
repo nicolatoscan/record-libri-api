@@ -78,8 +78,6 @@ export class UsersService extends APIService {
     async update(id: number, user: UserDTO) {
         this.validate(user, true, true);
 
-        console.log(user);
-
         return await this.prismaHandler(async () => {
             const u = await prisma.users.update({
                 where: { id: id },

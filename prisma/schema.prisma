@@ -43,6 +43,11 @@ model Records {
   RecordTypes RecordTypes @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model Tags {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(50)
+}
+
 enum Roles {
   Readonly
   User

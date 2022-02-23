@@ -19,6 +19,11 @@ export interface RecordTypeDTO {
     name: string;
 }
 
+export interface TagDTO {
+    id: number;
+    name: string;
+}
+
 export interface RecordDTO {
     id?: number;
     number: number;

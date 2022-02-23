@@ -9,6 +9,7 @@ import { LibrariesModule } from './modules/libraries/libraries.module';
 import { RecordTypesModule } from './modules/record-types/record-types.module';
 import { RecordsModule } from './modules/records/records.module';
 import { UsersModule } from './modules/users/users.module';
+import { TagsModule } from './modules/tags/tags.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     LibrariesModule,
     RecordTypesModule,
-    RecordsModule
+    RecordsModule,
+    TagsModule,
   ],
   controllers: [
     AppController

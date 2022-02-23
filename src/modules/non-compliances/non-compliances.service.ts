@@ -9,6 +9,7 @@ import { NCGroup, NonCompliances } from '@prisma/client';
 export class NonCompliancesService extends APIService {
 
     private groupsList = Object.keys(NCGroup);
+    private languagesList = [ 'ITA', 'GER', 'ENG' ];
 
     private validate(nc: NonCompliancesDTO, throwError = false): string | null {
         const schema = Joi.object({
@@ -55,6 +56,10 @@ export class NonCompliancesService extends APIService {
 
     getGroups(): string[] {
         return [ ...this.groupsList ];
+    }
+
+    getLanguages(): string[] {
+        return [ ...this.languagesList ];
     }
 
     async getAll(): Promise<NonCompliancesDTO[]> {

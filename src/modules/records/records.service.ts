@@ -80,6 +80,12 @@ export class RecordsService extends APIService {
         return this.mapRecordToDTO(record);
     }
 
+    async getAllNumbers(): Promise<{ id: number, number: number }[]> {
+        return await this.prismaHandler(async () => {
+            return await prisma.records.findMany({ select: { id: true, number: true } });
+        });
+    }
+
     async add(record: RecordDTO, userId: number) {
         this.validate(record, true);
 

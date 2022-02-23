@@ -21,6 +21,11 @@ export class RecordsController {
         return await this.recordsService.getMine(req.user?.id);
     }
 
+    @Get('numbers')
+    async getAllNumbers() {
+        return await this.recordsService.getAllNumbers();
+    }
+
     @Get(':id')
     async getById(@Param('id') id: string) {
         return await this.recordsService.getById(+id);

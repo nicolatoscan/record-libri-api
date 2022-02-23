@@ -46,5 +46,5 @@ export interface NonCompliancesDTO {
     language: string;
     description: string;
     group: NCGroup;
-    dateAdded: Date;
+    dateAdded?: Date;
 }

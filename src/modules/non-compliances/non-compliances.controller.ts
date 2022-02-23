@@ -11,6 +11,11 @@ export class NonCompliancesController {
         return this.nonCompliancesService.getGroups();
     }
 
+    @Get('languages')
+    async getLanguages() {
+        return this.nonCompliancesService.getLanguages();
+    }
+
     @Get()
     async getAll() {
         return await this.nonCompliancesService.getAll();

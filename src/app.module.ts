@@ -10,6 +10,7 @@ import { RecordTypesModule } from './modules/record-types/record-types.module';
 import { RecordsModule } from './modules/records/records.module';
 import { UsersModule } from './modules/users/users.module';
 import { TagsModule } from './modules/tags/tags.module';
+import { NonCompliancesModule } from './modules/non-compliances/non-compliances.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TagsModule } from './modules/tags/tags.module';
     RecordTypesModule,
     RecordsModule,
     TagsModule,
+    NonCompliancesModule,
   ],
   controllers: [
     AppController

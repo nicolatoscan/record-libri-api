@@ -8,44 +8,67 @@ datasource db {
 }
 
 model Users {
-  username String    @db.VarChar(120)
-  password String    @db.VarChar(120)
-  id       Int       @id @default(autoincrement())
-  role     Int
-  Records  Records[]
+  username       String           @db.VarChar(120)
+  password       String           @db.VarChar(120)
+  id             Int              @id @default(autoincrement())
+  role           Int
+  NonCompliances NonCompliances[]
+  Records        Records[]
 }
 
 model Libraries {
-  id      Int       @id @default(autoincrement())
-  code    String    @db.VarChar(50)
-  name    String    @db.VarChar(250)
-  Records Records[]
+  id             Int              @id @default(autoincrement())
+  code           String           @db.VarChar(50)
+  name           String           @db.VarChar(250)
+  NonCompliances NonCompliances[]
+  Records        Records[]
 }
 
 model RecordTypes {
-  id      Int       @id @default(autoincrement())
-  name    String    @db.VarChar(50)
-  Records Records[]
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(50)
+  NonCompliances NonCompliances[]
+  Records        Records[]
 }
 
 model Records {
-  id          Int         @id @default(autoincrement())
-  number      Int
-  libraryId   Int
-  authorName  String?     @db.VarChar(250)
-  fly         Boolean
-  typeId      Int
-  recordType  RecordType?
-  addedById   Int
-  dateAdded   DateTime    @db.Date
-  Users       Users       @relation(fields: [addedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Libraries   Libraries   @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  RecordTypes RecordTypes @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             Int              @id @default(autoincrement())
+  number         Int
+  libraryId      Int
+  authorName     String?          @db.VarChar(250)
+  fly            Boolean
+  typeId         Int
+  recordType     RecordType?
+  addedById      Int
+  dateAdded      DateTime         @db.Date
+  Users          Users            @relation(fields: [addedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Libraries      Libraries        @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  RecordTypes    RecordTypes      @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  NonCompliances NonCompliances[]
 }
 
 model Tags {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(50)
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(50)
+  NonCompliances NonCompliances[]
+}
+
+model NonCompliances {
+  id           Int         @id(map: "NonCompliance_pkey") @default(autoincrement())
+  recordId     Int
+  userId       Int
+  language     String      @db.Char(3)
+  libraryId    Int
+  recordTypeId Int
+  tagId        Int
+  description  String
+  group        NCGroup
+  dateAdded    DateTime    @db.Date
+  Libraries    Libraries   @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_libraryId_fkey")
+  Records      Records     @relation(fields: [recordId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_recordId_fkey")
+  RecordTypes  RecordTypes @relation(fields: [recordTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_recordTypeId_fkey")
+  Tags         Tags        @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_tagId_fkey")
+  Users        Users       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_userId_fkey")
 }
 
 enum Roles {
@@ -59,4 +82,10 @@ enum RecordType {
   Modificato
   Copia
   Bonificato
+}
+
+enum NCGroup {
+  Distrazione
+  Ortografia
+  MancataFormazione
 }

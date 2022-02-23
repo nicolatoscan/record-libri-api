@@ -12,13 +12,13 @@ export class TagsController {
     }
 
     @Post()
-    async add(@Body() type: TagDTO) {
-        return await this.tagsService.add(type);
+    async add(@Body() tag: TagDTO) {
+        return await this.tagsService.add(tag);
     }
 
     @Patch(':id')
-    async patch(@Param('id') id: string, @Body() type: TagDTO) {
-        return await this.tagsService.update(+id, type);
+    async patch(@Param('id') id: string, @Body() tag: TagDTO) {
+        return await this.tagsService.update(+id, tag);
     }
 
     @Delete(':id')

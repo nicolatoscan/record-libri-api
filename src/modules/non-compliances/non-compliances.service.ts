@@ -53,6 +53,10 @@ export class NonCompliancesService extends APIService {
         }
     }
 
+    getGroups(): string[] {
+        return [ ...this.groupsList ];
+    }
+
     async getAll(): Promise<NonCompliancesDTO[]> {
         return await this.prismaHandler(async () => {
             return prisma.nonCompliances.findMany();

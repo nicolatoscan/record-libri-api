@@ -6,6 +6,11 @@ import { NonCompliancesService } from './non-compliances.service';
 export class NonCompliancesController {
     constructor(private nonCompliancesService: NonCompliancesService) { }
 
+    @Get('groups')
+    async getRoles() {
+        return this.nonCompliancesService.getGroups();
+    }
+
     @Get()
     async getAll() {
         return await this.nonCompliancesService.getAll();

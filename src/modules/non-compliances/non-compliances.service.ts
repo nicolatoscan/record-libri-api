@@ -3,7 +3,7 @@ import prisma from '../../common/prisma';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
 import { NonCompliancesDTO } from '../../types/dto';
-import { NCGroup, NonCompliances } from '@prisma/client';
+import { NCGroup } from '@prisma/client';
 
 @Injectable()
 export class NonCompliancesService extends APIService {
@@ -17,7 +17,7 @@ export class NonCompliancesService extends APIService {
             recordId: Joi.number().integer().min(1).required(),
             userId: Joi.number().integer().min(1).required(),
             libraryId: Joi.number().integer().min(1).required(),
-            recordTypeId: Joi.number().integer().min(1).required(),
+            formatId: Joi.number().integer().min(1).required(),
             tagId: Joi.number().integer().min(1).required(),
             language: Joi.string().length(3).required(),
             description: Joi.string().required().min(1).max(10000),
@@ -33,7 +33,7 @@ export class NonCompliancesService extends APIService {
             recordId: nc.recordId,
             userId: nc.userId,
             libraryId: nc.libraryId,
-            recordTypeId: nc.recordTypeId,
+            formatId: nc.formatId,
             tagId: nc.tagId,
             language: nc.language,
             description: nc.description,
@@ -42,7 +42,7 @@ export class NonCompliancesService extends APIService {
 
             recordNumber: nc.Records.number,
             libraryName: nc.Libraries.name,
-            recordTypeName: nc.RecordTypes.name,
+            formatName: nc.Formats.name,
             tagName: nc.Tags.name,
             dateRecord: nc.Records.dateAdded,
         }
@@ -52,7 +52,7 @@ export class NonCompliancesService extends APIService {
         return {
             recordId: nc.recordId,
             libraryId: nc.libraryId,
-            recordTypeId: nc.recordTypeId,
+            formatId: nc.formatId,
             tagId: nc.tagId,
             language: nc.language,
             description: nc.description,
@@ -74,7 +74,7 @@ export class NonCompliancesService extends APIService {
                 include: {
                     Records: { select: { number: true, dateAdded: true } },
                     Libraries: { select: { name: true } },
-                    RecordTypes: { select: { name: true } },
+                    Formats: { select: { name: true } },
                     Tags: { select: { name: true } },
                 }
             });

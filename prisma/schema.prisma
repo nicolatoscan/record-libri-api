@@ -24,20 +24,13 @@ model Libraries {
   Records        Records[]
 }
 
-model RecordTypes {
-  id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(50)
-  NonCompliances NonCompliances[]
-  Records        Records[]
-}
-
 model Records {
   id             Int              @id @default(autoincrement())
   number         Int
   libraryId      Int
   authorName     String?          @db.VarChar(250)
   fly            Boolean
-  typeId         Int
+  formatId       Int
   recordType     RecordType?
   addedById      Int
   dateAdded      DateTime         @db.Date
@@ -45,8 +38,8 @@ model Records {
   englishUNI     Boolean
   found          Founds
   Users          Users            @relation(fields: [addedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Formats        Formats          @relation(fields: [formatId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Records_typeId_fkey")
   Libraries      Libraries        @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  RecordTypes    RecordTypes      @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   NonCompliances NonCompliances[]
 }
 
@@ -57,21 +50,28 @@ model Tags {
 }
 
 model NonCompliances {
-  id           Int         @id(map: "NonCompliance_pkey") @default(autoincrement())
-  recordId     Int
-  userId       Int
-  language     String      @db.Char(3)
-  libraryId    Int
-  recordTypeId Int
-  tagId        Int
-  description  String
-  group        NCGroup
-  dateAdded    DateTime    @db.Date
-  Libraries    Libraries   @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_libraryId_fkey")
-  Records      Records     @relation(fields: [recordId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_recordId_fkey")
-  RecordTypes  RecordTypes @relation(fields: [recordTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_recordTypeId_fkey")
-  Tags         Tags        @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_tagId_fkey")
-  Users        Users       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_userId_fkey")
+  id          Int       @id(map: "NonCompliance_pkey") @default(autoincrement())
+  recordId    Int
+  userId      Int
+  language    String    @db.Char(3)
+  libraryId   Int
+  formatId    Int
+  tagId       Int
+  description String
+  group       NCGroup
+  dateAdded   DateTime  @db.Date
+  Formats     Formats   @relation(fields: [formatId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_recordTypeId_fkey")
+  Libraries   Libraries @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_libraryId_fkey")
+  Records     Records   @relation(fields: [recordId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_recordId_fkey")
+  Tags        Tags      @relation(fields: [tagId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_tagId_fkey")
+  Users       Users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "NonCompliance_userId_fkey")
+}
+
+model Formats {
+  id             Int              @id(map: "RecordTypes_pkey") @default(autoincrement())
+  name           String           @db.VarChar(50)
+  NonCompliances NonCompliances[]
+  Records        Records[]
 }
 
 enum Roles {

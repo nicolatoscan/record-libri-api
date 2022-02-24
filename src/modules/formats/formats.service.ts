@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import prisma from '../../common/prisma';
-import { RecordType } from '@prisma/client';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
-import { RecordTypeDTO } from 'src/types/dto';
+import { FormatDTO } from 'src/types/dto';
 
 @Injectable()
-export class RecordTypesService extends APIService {
+export class FormatsService extends APIService {
 
-    private validate(r: RecordTypeDTO, throwError = false): string | null {
+    private validate(r: FormatDTO, throwError = false): string | null {
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
             name: Joi.string().required().min(1).max(50),
@@ -16,25 +15,25 @@ export class RecordTypesService extends APIService {
         return this.validateSchema(schema, r, throwError);
     }
 
-    async getAll(): Promise<RecordTypeDTO[]> {
+    async getAll(): Promise<FormatDTO[]> {
         return await this.prismaHandler(async () => {
-            return prisma.recordTypes.findMany();
+            return prisma.formats.findMany();
         });
     }
 
-    async add(type: RecordTypeDTO) {
+    async add(type: FormatDTO) {
         this.validate(type, true);
 
         return await this.prismaHandler(async () => {
-            const t = await prisma.recordTypes.create({ data: { name: type.name } });
+            const t = await prisma.formats.create({ data: { name: type.name } });
             return t.id;
         });
     }
 
-    async update(id: number, type: RecordTypeDTO) {
+    async update(id: number, type: FormatDTO) {
         this.validate(type, true);
         return await this.prismaHandler(async () => {
-            const t = await prisma.recordTypes.update({
+            const t = await prisma.formats.update({
                 where: { id: id },
                 data: { name: type.name }
             });
@@ -44,7 +43,7 @@ export class RecordTypesService extends APIService {
 
     async delete(id: number) {
         return await this.prismaHandler(async () => {
-            const t = await prisma.recordTypes.delete({ where: { id: id }});
+            const t = await prisma.formats.delete({ where: { id: id }});
             return t.id;
         });
     }

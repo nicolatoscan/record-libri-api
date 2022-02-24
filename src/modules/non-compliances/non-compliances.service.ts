@@ -3,13 +3,22 @@ import prisma from '../../common/prisma';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
 import { NonCompliancesDTO } from '../../types/dto';
-import { NCGroup } from '@prisma/client';
+import { NCGroup, NonCompliances } from '@prisma/client';
 
 @Injectable()
 export class NonCompliancesService extends APIService {
 
     private groupsList = Object.keys(NCGroup);
     private languagesList = [ 'ITA', 'GER', 'ENG' ];
+
+    private getIncludeFields() {
+        return {
+            Records: { select: { number: true, dateAdded: true } },
+            Libraries: { select: { name: true } },
+            Formats: { select: { name: true } },
+            Tags: { select: { name: true } },
+        }
+    }
 
     private validate(nc: NonCompliancesDTO, throwError = false): string | null {
         const schema = Joi.object({
@@ -27,7 +36,7 @@ export class NonCompliancesService extends APIService {
         return this.validateSchema(schema, nc, throwError);
     }
 
-    private mapNCToDTO(nc): NonCompliancesDTO {
+    private mapNCToDTO(nc: NonCompliances): NonCompliancesDTO {
         return {
             id: nc.id,
             recordId: nc.recordId,
@@ -40,11 +49,11 @@ export class NonCompliancesService extends APIService {
             dateAdded: nc.dateAdded,
             group: nc.group,
 
-            recordNumber: nc.Records.number,
-            libraryName: nc.Libraries.name,
-            formatName: nc.Formats.name,
-            tagName: nc.Tags.name,
-            dateRecord: nc.Records.dateAdded,
+            recordNumber: (nc as any).Records?.number ?? 0,
+            libraryName: (nc as any).Libraries?.name ?? '',
+            formatName: (nc as any).Formats?.name ?? '',
+            tagName: (nc as any).Tags?.name ?? '',
+            dateRecord: (nc as any).Records?.dateAdded ?? '',
         }
     }
 
@@ -71,12 +80,7 @@ export class NonCompliancesService extends APIService {
     async getAll(): Promise<NonCompliancesDTO[]> {
         const res = await this.prismaHandler(async () => {
             return prisma.nonCompliances.findMany({
-                include: {
-                    Records: { select: { number: true, dateAdded: true } },
-                    Libraries: { select: { name: true } },
-                    Formats: { select: { name: true } },
-                    Tags: { select: { name: true } },
-                }
+                include: this.getIncludeFields()
             });
         });
         return res.map(x => this.mapNCToDTO(x));

@@ -33,13 +33,14 @@ export interface RecordDTO {
     fly: boolean;
     recordType: RecordType;
     found: Founds;
-
     dateAdded: Date;
-
+    
     addedById: number;
-
     libraryId: number;
     formatId: number;
+
+    libraryName?: string;
+    formatName?: string;
 }
 
 export interface NonCompliancesDTO {

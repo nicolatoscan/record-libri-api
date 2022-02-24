@@ -12,6 +12,13 @@ export class RecordsService extends APIService {
     private recordTypesList = Object.keys(RecordType);
     private foundsList = Object.keys(Founds);
 
+    private getIncludeFields() {
+        return {
+            Libraries: { select: { name: true } },
+            Formats: { select: { name: true } },
+        };
+    }
+
     private validate(r: RecordDTO, throwError = false): string | null {
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
@@ -44,6 +51,9 @@ export class RecordsService extends APIService {
             isAuthority: r.isAuthority,
             found: r.found,
             dateAdded: r.dateAdded,
+
+            formatName: (r as any).Formats?.name ?? '',
+            libraryName: (r as any).Libraries?.name ?? '',
         };
     }
 
@@ -71,7 +81,7 @@ export class RecordsService extends APIService {
 
     async getAll(): Promise<RecordDTO[]> {
         const records = await this.prismaHandler(async () => {
-            return prisma.records.findMany();
+            return prisma.records.findMany({ include: this.getIncludeFields() });
         });
         return records.map(r => this.mapRecordToDTO(r));
     }
@@ -81,7 +91,10 @@ export class RecordsService extends APIService {
 
         const records = await this.prismaHandler(async () => {
             return await prisma.records.findMany({
-                where: { addedById: userId }
+                where: { addedById: userId },
+                include: this.getIncludeFields(),
+                orderBy: { id: 'desc' },
+                take: 100,
             });
         });
         return records.map(r => this.mapRecordToDTO(r));
@@ -89,7 +102,10 @@ export class RecordsService extends APIService {
 
     async getById(id: number): Promise<RecordDTO> {
         const record = await this.prismaHandler(async () => {
-            return await prisma.records.findUnique({ where: { id: id } });
+            return await prisma.records.findUnique({
+                where: { id: id },
+                include: this.getIncludeFields() 
+            });
         });
         return this.mapRecordToDTO(record);
     }

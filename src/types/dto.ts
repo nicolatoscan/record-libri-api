@@ -1,4 +1,4 @@
-import { RecordType, NCGroup } from '@prisma/client';
+import { RecordType, NCGroup, Founds } from '@prisma/client';
 
 export interface LibraryDTO {
     id: number;
@@ -27,13 +27,20 @@ export interface TagDTO {
 export interface RecordDTO {
     id?: number;
     number: number;
-    libraryId: number;
-    typeId: number;
     authorName?: string;
+    isAuthority: boolean;
+    englishUNI: boolean;
     fly: boolean;
     recordType: RecordType;
-    addedById: number;
+    found: Founds;
+
     dateAdded: Date;
+
+    addedById: number;
+    typeId: number;
+    libraryId: number;
+
+    
 }
 
 export interface NonCompliancesDTO {

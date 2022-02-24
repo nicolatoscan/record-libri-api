@@ -6,14 +6,19 @@ import { RecordsService } from './records.service';
 export class RecordsController {
     constructor(private recordsService: RecordsService) { }
 
-    @Get('types')
-    async getRoles() {
-        return await this.recordsService.getTypes();
-    }
-
     @Get()
     async getAll() {
         return await this.recordsService.getAll();
+    }
+
+    @Get('types')
+    async getTypes() {
+        return await this.recordsService.getTypes();
+    }
+
+    @Get('founds')
+    async getRoles() {
+        return await this.recordsService.getFounds();
     }
 
     @Get('mine')

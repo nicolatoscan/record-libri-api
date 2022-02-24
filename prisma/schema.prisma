@@ -41,6 +41,9 @@ model Records {
   recordType     RecordType?
   addedById      Int
   dateAdded      DateTime         @db.Date
+  isAuthority    Boolean
+  englishUNI     Boolean
+  found          Founds
   Users          Users            @relation(fields: [addedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Libraries      Libraries        @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   RecordTypes    RecordTypes      @relation(fields: [typeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -88,4 +91,10 @@ enum NCGroup {
   Distrazione
   Ortografia
   MancataFormazione
+}
+
+enum Founds {
+  Moderno
+  Pregio
+  Antico
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import prisma from '../../common/prisma';
-import { Records, RecordType } from '@prisma/client';
+import { Records, RecordType, Founds } from '@prisma/client';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
 import { RecordDTO } from 'src/types/dto';
@@ -10,6 +10,7 @@ import { RecordDTO } from 'src/types/dto';
 export class RecordsService extends APIService {
 
     private recordTypesList = Object.keys(RecordType);
+    private foundsList = Object.keys(Founds);
 
     private validate(r: RecordDTO, throwError = false): string | null {
         const schema = Joi.object({
@@ -19,7 +20,10 @@ export class RecordsService extends APIService {
             typeId: Joi.number().integer().min(1).required(),
             authorName: Joi.string().min(2).max(250),
             fly: Joi.boolean().required(),
-            recordType: Joi.string().required().valid(...this.recordTypesList)
+            recordType: Joi.string().required().valid(...this.recordTypesList),
+            englishUNI: Joi.boolean().required(),
+            isAuthority: Joi.boolean().required(),
+            found: Joi.string().required().valid(...this.foundsList),
         });
 
         r.number = +r.number;
@@ -36,23 +40,33 @@ export class RecordsService extends APIService {
             fly: r.fly,
             recordType: r.recordType,
             addedById: r.addedById,
+            englishUNI: r.englishUNI,
+            isAuthority: r.isAuthority,
+            found: r.found,
             dateAdded: r.dateAdded,
         };
     }
 
-    private mapDTOToRecord(record: RecordDTO) {
+    private mapDTOToRecord(r: RecordDTO) {
         return {
-            number: record.number,
-            fly: record.fly,
-            authorName: record.authorName ?? null,
-            recordType: record.recordType ?? null,
-            libraryId: record.libraryId,
-            typeId: record.typeId,
+            number: r.number,
+            fly: r.fly,
+            authorName: r.authorName ?? null,
+            recordType: r.recordType ?? null,
+            libraryId: r.libraryId,
+            typeId: r.typeId,
+            englishUNI: r.englishUNI,
+            isAuthority: r.isAuthority,
+            found: r.found,
         }
     }
 
     getTypes(): string[] {
         return [ ...this.recordTypesList ];
+    }
+
+    getFounds(): string[] {
+        return [ ...this.foundsList ];
     }
 
     async getAll(): Promise<RecordDTO[]> {

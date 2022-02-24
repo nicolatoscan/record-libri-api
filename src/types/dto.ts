@@ -47,4 +47,10 @@ export interface NonCompliancesDTO {
     description: string;
     group: NCGroup;
     dateAdded?: Date;
+
+    recordNumber?: number;
+    libraryName?: string;
+    recordTypeName?: string;
+    tagName?: string;
+    dateRecord?: string;
 }

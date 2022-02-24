@@ -27,7 +27,7 @@ export class NonCompliancesService extends APIService {
         return this.validateSchema(schema, nc, throwError);
     }
 
-    private mapNCToDTO(nc: NonCompliances): NonCompliancesDTO {
+    private mapNCToDTO(nc): NonCompliancesDTO {
         return {
             id: nc.id,
             recordId: nc.recordId,
@@ -39,6 +39,12 @@ export class NonCompliancesService extends APIService {
             description: nc.description,
             dateAdded: nc.dateAdded,
             group: nc.group,
+
+            recordNumber: nc.Records.number,
+            libraryName: nc.Libraries.name,
+            recordTypeName: nc.RecordTypes.name,
+            tagName: nc.Tags.name,
+            dateRecord: nc.Records.dateAdded,
         }
     }
 
@@ -63,9 +69,17 @@ export class NonCompliancesService extends APIService {
     }
 
     async getAll(): Promise<NonCompliancesDTO[]> {
-        return await this.prismaHandler(async () => {
-            return prisma.nonCompliances.findMany();
+        const res = await this.prismaHandler(async () => {
+            return prisma.nonCompliances.findMany({
+                include: {
+                    Records: { select: { number: true, dateAdded: true } },
+                    Libraries: { select: { name: true } },
+                    RecordTypes: { select: { name: true } },
+                    Tags: { select: { name: true } },
+                }
+            });
         });
+        return res.map(x => this.mapNCToDTO(x));
     }
 
     async add(nc: NonCompliancesDTO, userId: number) {

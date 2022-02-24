@@ -31,6 +31,11 @@ export class RecordsService extends APIService {
             englishUNI: Joi.boolean().required(),
             isAuthority: Joi.boolean().required(),
             found: Joi.string().required().valid(...this.foundsList),
+            addedById: Joi.number().integer().min(1),
+            
+            dateAdded: Joi.string(),
+            formatName: Joi.string(),
+            libraryName: Joi.string(),
         });
 
         r.number = +r.number;

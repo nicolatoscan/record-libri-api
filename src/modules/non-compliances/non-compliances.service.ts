@@ -21,6 +21,7 @@ export class NonCompliancesService extends APIService {
     }
 
     private validate(nc: NonCompliancesDTO, throwError = false): string | null {
+        console.log(nc);
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
             recordId: Joi.number().integer().min(1).required(),
@@ -32,6 +33,12 @@ export class NonCompliancesService extends APIService {
             description: Joi.string().required().min(1).max(10000),
             group: Joi.string().required().valid(...this.groupsList),
             dateAdded: Joi.date(),
+
+            recordNumber: Joi.number(),
+            libraryName: Joi.string(),
+            formatName: Joi.string(),
+            tagName: Joi.string(),
+            dateRecord: Joi.string(),
         });
         return this.validateSchema(schema, nc, throwError);
     }

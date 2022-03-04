@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Request } from '@nestjs/common';
-import { RecordDTO } from 'src/types/dto';
+import { RecordDTO, RecordFilterDTO } from 'src/types/dto';
 import { RecordsService } from './records.service';
 
 @Controller('records')
@@ -39,6 +39,11 @@ export class RecordsController {
     @Post()
     async add(@Request() req, @Body() record: RecordDTO) {
         return await this.recordsService.add(record, req.user?.id);
+    }
+
+    @Post('filters')
+    async getFiltred(@Body() filters: RecordFilterDTO) {
+        return await this.recordsService.getFiltredRecords(filters);
     }
 
     @Patch(':id')

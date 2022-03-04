@@ -58,3 +58,9 @@ export interface NonCompliancesDTO {
     tagName?: string;
     dateRecord?: string;
 }
+
+export interface RecordFilterDTO {
+    startDate?: string;
+    endDate?: string;
+    userId?: number;
+}

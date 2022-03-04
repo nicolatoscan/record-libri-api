@@ -3,7 +3,7 @@ import prisma from '../../common/prisma';
 import { Records, RecordType, Founds } from '@prisma/client';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
-import { RecordDTO } from 'src/types/dto';
+import { RecordDTO, RecordFilterDTO } from 'src/types/dto';
 
 
 @Injectable()
@@ -90,6 +90,29 @@ export class RecordsService extends APIService {
                 include: this.getIncludeFields(),
                 orderBy: { id: 'desc' },
                 take: 100,
+            });
+        });
+        return records.map(r => this.mapRecordToDTO(r));
+    }
+
+    async getFiltredRecords(filters: RecordFilterDTO): Promise<RecordDTO[]> {
+        const where = {} as any;
+        if (filters.startDate || filters.endDate) {
+            where.dateAdded = {};
+            if (filters.startDate)
+                where.dateAdded.gte = new Date(filters.startDate);
+            if (filters.endDate)
+                where.dateAdded.lte = new Date(filters.endDate);
+        }
+        if (filters.userId)
+            where.addedById = filters.userId;
+
+        const records = await this.prismaHandler(async () => {
+            return await prisma.records.findMany({
+                where: where,
+                include: this.getIncludeFields(),
+                orderBy: { dateAdded: 'desc' },
+                take: 10000,
             });
         });
         return records.map(r => this.mapRecordToDTO(r));

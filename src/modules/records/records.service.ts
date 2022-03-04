@@ -25,20 +25,16 @@ export class RecordsService extends APIService {
             number: Joi.number().integer().min(1).required(),
             libraryId: Joi.number().integer().min(1).required(),
             formatId: Joi.number().integer().min(1).required(),
-            authorName: Joi.string().min(2).max(250),
-            fly: Joi.boolean().required(),
+            authorName: [ Joi.string().max(250), Joi.allow(null) ],
             recordType: Joi.string().required().valid(...this.recordTypesList),
-            englishUNI: Joi.boolean().required(),
-            isAuthority: Joi.boolean().required(),
             found: Joi.string().required().valid(...this.foundsList),
+
             addedById: Joi.number().integer().min(1),
             
             dateAdded: Joi.string(),
             formatName: Joi.string(),
             libraryName: Joi.string(),
         });
-
-        r.number = +r.number;
         return this.validateSchema(schema, r, throwError);
     }
 
@@ -49,11 +45,8 @@ export class RecordsService extends APIService {
             libraryId: r.libraryId,
             formatId: r.formatId,
             authorName: r.authorName,
-            fly: r.fly,
             recordType: r.recordType,
             addedById: r.addedById,
-            englishUNI: r.englishUNI,
-            isAuthority: r.isAuthority,
             found: r.found,
             dateAdded: r.dateAdded,
 
@@ -64,14 +57,11 @@ export class RecordsService extends APIService {
 
     private mapDTOToRecord(r: RecordDTO) {
         return {
-            number: r.number,
-            fly: r.fly,
-            authorName: r.authorName ?? null,
-            recordType: r.recordType ?? null,
+            number: +r.number,
+            authorName: r.authorName,
+            recordType: r.recordType,
             libraryId: r.libraryId,
             formatId: r.formatId,
-            englishUNI: r.englishUNI,
-            isAuthority: r.isAuthority,
             found: r.found,
         }
     }

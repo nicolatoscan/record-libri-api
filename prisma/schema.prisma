@@ -29,13 +29,10 @@ model Records {
   number         Int
   libraryId      Int
   authorName     String?          @db.VarChar(250)
-  fly            Boolean
   formatId       Int
   recordType     RecordType?
   addedById      Int
   dateAdded      DateTime         @db.Date
-  isAuthority    Boolean
-  englishUNI     Boolean
   found          Founds
   Users          Users            @relation(fields: [addedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Formats        Formats          @relation(fields: [formatId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Records_typeId_fkey")

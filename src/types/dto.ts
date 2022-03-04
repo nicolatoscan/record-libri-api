@@ -27,10 +27,7 @@ export interface TagDTO {
 export interface RecordDTO {
     id?: number;
     number: number;
-    authorName?: string;
-    isAuthority: boolean;
-    englishUNI: boolean;
-    fly: boolean;
+    authorName: string | null;
     recordType: RecordType;
     found: Founds;
     dateAdded: Date;

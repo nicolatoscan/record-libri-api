@@ -63,4 +63,5 @@ export interface RecordFilterDTO {
     startDate?: string;
     endDate?: string;
     userId?: number;
+    libraryId?: number;
 }

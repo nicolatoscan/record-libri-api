@@ -96,7 +96,15 @@ export class RecordsService extends APIService {
     }
 
     async getFiltredRecords(filters: RecordFilterDTO): Promise<RecordDTO[]> {
+
         const where = {} as any;
+
+        if (filters.userId)
+            where.addedById = filters.userId;
+
+        if (filters.libraryId)
+            where.libraryId = filters.libraryId;
+
         if (filters.startDate || filters.endDate) {
             where.dateAdded = {};
             if (filters.startDate)
@@ -104,8 +112,6 @@ export class RecordsService extends APIService {
             if (filters.endDate)
                 where.dateAdded.lte = new Date(filters.endDate);
         }
-        if (filters.userId)
-            where.addedById = filters.userId;
 
         const records = await this.prismaHandler(async () => {
             return await prisma.records.findMany({

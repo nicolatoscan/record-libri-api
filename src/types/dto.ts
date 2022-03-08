@@ -2,7 +2,6 @@ import { RecordType, NCGroup, Founds } from '@prisma/client';
 
 export interface LibraryDTO {
     id: number;
-    code: string;
     name: string;
 }
 

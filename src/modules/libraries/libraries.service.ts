@@ -10,7 +10,6 @@ export class LibrariesService extends APIService {
     private validate(l: LibraryDTO, throwError = false): string | null {
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
-            code: Joi.string().required().min(1).max(50),
             name: Joi.string().required().min(1).max(100)
         });
         return this.validateSchema(schema, l, throwError);
@@ -24,7 +23,7 @@ export class LibrariesService extends APIService {
         this.validate(l, true);
 
         return await this.prismaHandler(async () => {
-            const r = await prisma.libraries.create({ data: { code: l.code, name: l.name } });
+            const r = await prisma.libraries.create({ data: { name: l.name } });
             return r.id;
         })
     }
@@ -35,7 +34,7 @@ export class LibrariesService extends APIService {
         return await this.prismaHandler(async () => {
             const r = await prisma.libraries.update({
                 where: { id: id },
-                data: { code: l.code, name: l.name }
+                data: { name: l.name }
             });
             return r.id;
         })

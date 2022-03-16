@@ -1,6 +1,5 @@
 export enum Role {
+    Commitente = 5,
     User = 10,
-    Supervisor = 20,
     Admin = 100,
-    SuperAdmin = 120,
 }

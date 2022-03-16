@@ -17,6 +17,7 @@ export class UsersService extends APIService {
             username: Joi.string().required().min(1).max(120),
             password: isUpdate ? Joi.string().min(8).max(120) : Joi.string().min(8).max(120).required(),
             role: Joi.number().integer().required().valid(...roles),
+            libraryId: Joi.number().integer().min(1),
         });
         return this.validateSchema(schema, l, throwError);
     }
@@ -66,6 +67,7 @@ export class UsersService extends APIService {
         return await this.prismaHandler(async () => {
             const r = await prisma.users.create({
                 data: {
+                    libraryId: user.libraryId,
                     username: user.username,
                     password: await this.getHashedPassword(user.password),
                     role: user.role,
@@ -82,6 +84,7 @@ export class UsersService extends APIService {
             const u = await prisma.users.update({
                 where: { id: id },
                 data: {
+                    libraryId: user.libraryId,
                     username: user.username,
                     role: user.role,
                     ...(user.password ? { password: await this.getHashedPassword(user.password) } : {})

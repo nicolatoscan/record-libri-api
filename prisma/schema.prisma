@@ -12,6 +12,8 @@ model Users {
   password       String           @db.VarChar(120)
   id             Int              @id @default(autoincrement())
   role           Int
+  libraryId      Int?
+  Libraries      Libraries?       @relation(fields: [libraryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   NonCompliances NonCompliances[]
   Records        Records[]
 }
@@ -21,6 +23,7 @@ model Libraries {
   name           String           @db.VarChar(250)
   NonCompliances NonCompliances[]
   Records        Records[]
+  Users          Users[]
 }
 
 model Records {

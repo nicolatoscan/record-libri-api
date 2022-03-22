@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Request } from '@nestjs/common';
 import { RecordDTO, RecordFilterDTO } from 'src/types/dto';
 import { Role } from '../auth/role.enum';
 import { Roles } from '../auth/roles.decorator';
@@ -38,8 +38,15 @@ export class RecordsController {
 
     @Get(':id')
     @Roles(Role.User)
-    async getById(@Param('id') id: string) {
-        return await this.recordsService.getById(+id);
+    async getById(@Request() req, @Param('id') id: string) {
+        const r = await this.recordsService.getById(+id, req.user?.id);
+        if (!r) throw new NotFoundException();
+        return r;
+    }
+
+    @Post('filters')
+    async getFiltred(@Request() req, @Body() filters: RecordFilterDTO) {
+        return await this.recordsService.getFiltredRecords(filters, req.user);
     }
 
     @Post()
@@ -48,21 +55,16 @@ export class RecordsController {
         return await this.recordsService.add(record, req.user?.id);
     }
 
-    @Post('filters')
-    async getFiltred(@Body() filters: RecordFilterDTO) {
-        return await this.recordsService.getFiltredRecords(filters);
-    }
-
     @Patch(':id')
     @Roles(Role.User)
-    async patch(@Param('id') id: string, @Body() record: RecordDTO) {
-        return await this.recordsService.update(+id, record);
+    async patch(@Request() req, @Param('id') id: string, @Body() record: RecordDTO) {
+        return await this.recordsService.update(+id, record, req.user);
     }
 
     @Delete(':id')
     @Roles(Role.User)
-    async delete(@Param('id') id: string) {
-        return await this.recordsService.delete(+id);
+    async delete(@Request() req, @Param('id') id: string) {
+        return await this.recordsService.delete(+id, req.user);
     }
 
 }

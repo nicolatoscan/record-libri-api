@@ -24,6 +24,12 @@ export class NonCompliancesController {
         return await this.nonCompliancesService.getAll();
     }
 
+    @Get('mine')
+    @Roles(Role.User)
+    async getMine(@Request() req) {
+        return await this.nonCompliancesService.getMine(req.user?.id);
+    }
+
     @Post()
     @Roles(Role.User)
     async add(@Request() req, @Body() nc: NonCompliancesDTO) {
@@ -32,14 +38,14 @@ export class NonCompliancesController {
 
     @Patch(':id')
     @Roles(Role.User)
-    async patch(@Param('id') id: string, @Body() nc: NonCompliancesDTO) {
-        return await this.nonCompliancesService.update(+id, nc);
+    async patch(@Request() req, @Param('id') id: string, @Body() nc: NonCompliancesDTO) {
+        return await this.nonCompliancesService.update(+id, nc, req.user);
     }
 
     @Delete(':id')
     @Roles(Role.User)
-    async delete(@Param('id') id: string) {
-        return await this.nonCompliancesService.delete(+id);
+    async delete(@Request() req, @Param('id') id: string) {
+        return await this.nonCompliancesService.delete(+id, req.user);
     }
 
 

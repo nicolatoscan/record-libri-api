@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import prisma from '../../common/prisma';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
-import { NonCompliancesDTO } from '../../types/dto';
+import { NonCompliancesDTO, UserDTO } from '../../types/dto';
 import { NCGroup, NonCompliances } from '@prisma/client';
+import { Role } from '../auth/role.enum';
 
 @Injectable()
 export class NonCompliancesService extends APIService {
@@ -21,7 +22,6 @@ export class NonCompliancesService extends APIService {
     }
 
     private validate(nc: NonCompliancesDTO, throwError = false): string | null {
-        console.log(nc);
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
             recordId: Joi.number().integer().min(1).required(),
@@ -93,6 +93,16 @@ export class NonCompliancesService extends APIService {
         return res.map(x => this.mapNCToDTO(x));
     }
 
+    async getMine(userId: number): Promise<NonCompliancesDTO[]> {
+        const res = await this.prismaHandler(async () => {
+            return prisma.nonCompliances.findMany({
+                where: { userId: userId },
+                include: this.getIncludeFields()
+            });
+        });
+        return res.map(x => this.mapNCToDTO(x));
+    }
+
     async add(nc: NonCompliancesDTO, userId: number) {
         this.validate(nc, true);
 
@@ -108,22 +118,36 @@ export class NonCompliancesService extends APIService {
         });
     }
 
-    async update(id: number, nc: NonCompliancesDTO) {
+    async update(id: number, nc: NonCompliancesDTO, user: UserDTO) {
         this.validate(nc, true);
 
         return await this.prismaHandler(async () => {
-            const t = await prisma.nonCompliances.update({
-                where: { id: id },
+            const t = await prisma.nonCompliances.updateMany({
+                where: {
+                    id: id,
+                    ...(user.role === Role.Admin ? {} : {addedById: user.id})
+                },
                 data: this.mapDTOToNC(nc),
             });
-            return t.id;
+            if (t.count < 1) {
+                throw new NotFoundException();
+            }
+            return id;
         });
     }
 
-    async delete(id: number) {
+    async delete(id: number, user: UserDTO) {
         return await this.prismaHandler(async () => {
-            const t = await prisma.nonCompliances.delete({ where: { id: id }});
-            return t.id;
+            const t = await prisma.nonCompliances.deleteMany({
+                where: {
+                    id: id,
+                    ...(user.role === Role.Admin ? {} : {addedById: user.id})
+                }
+            });
+            if (t.count < 1) {
+                throw new NotFoundException();
+            }
+            return id;
         });
     }
 

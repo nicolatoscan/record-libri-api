@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import prisma from '../../common/prisma';
 import { Records, RecordType, Founds } from '@prisma/client';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
-import { RecordDTO, RecordFilterDTO } from 'src/types/dto';
+import { RecordDTO, RecordFilterDTO, UserDTO } from 'src/types/dto';
+import { Role } from '../auth/role.enum';
 
 
 @Injectable()
@@ -95,15 +96,32 @@ export class RecordsService extends APIService {
         return records.map(r => this.mapRecordToDTO(r));
     }
 
-    async getFiltredRecords(filters: RecordFilterDTO): Promise<RecordDTO[]> {
+    async getFiltredRecords(filters: RecordFilterDTO, user: UserDTO): Promise<RecordDTO[]> {
+
+        switch (user.role) {
+            case Role.Commitente:
+                if (filters.libraryId !== user.libraryId) return [];
+                break;
+            
+            case Role.User:
+                if (filters.userId !== user.id) return [];
+                break;
+
+            case Role.Admin:
+                break;
+
+            default:
+                return [];
+        }
 
         const where = {} as any;
 
         if (filters.userId)
             where.addedById = filters.userId;
 
-        if (filters.libraryId)
+        if (filters.libraryId) {
             where.libraryId = filters.libraryId;
+        }
 
         if (filters.startDate || filters.endDate) {
             where.dateAdded = {};
@@ -124,14 +142,15 @@ export class RecordsService extends APIService {
         return records.map(r => this.mapRecordToDTO(r));
     }
 
-    async getById(id: number): Promise<RecordDTO> {
+    async getById(id: number, userId: number): Promise<RecordDTO | null> {
         const record = await this.prismaHandler(async () => {
-            return await prisma.records.findUnique({
-                where: { id: id },
+            return await prisma.records.findFirst({
+                where: { id: id, addedById: userId },
                 include: this.getIncludeFields() 
             });
         });
-        return this.mapRecordToDTO(record);
+
+        return record ? this.mapRecordToDTO(record) : null;
     }
 
     async getAllNumbers(): Promise<{ id: number, number: number }[]> {
@@ -155,22 +174,36 @@ export class RecordsService extends APIService {
         });
     }
 
-    async update(id: number, record: RecordDTO) {
+    async update(id: number, record: RecordDTO, user: UserDTO) {
         this.validate(record, true);
 
         return await this.prismaHandler(async () => {
-            const r = await prisma.records.update({
-                where: { id: id },
+            const r = await prisma.records.updateMany({
+                where: {
+                    id: id,
+                    ...(user.role === Role.Admin ? {} : {addedById: user.id})
+                },
                 data:  this.mapDTOToRecord(record)
             });
-            return r.id;
+            if (r.count < 1) {
+                throw new NotFoundException();
+            }
+            return id;
         });
     }
 
-    async delete(id: number) {
+    async delete(id: number, user: UserDTO) {
         return await this.prismaHandler(async () => {
-            const r = await prisma.records.delete({ where: { id: id }});
-            return r.id;
+            const r = await prisma.records.deleteMany({
+                where: {
+                    id: id,
+                    ...(user.role === Role.Admin ? {} : {addedById: user.id})
+                }
+            });
+            if (r.count < 1) {
+                throw new NotFoundException();
+            }
+            return id;
         });
     }
 

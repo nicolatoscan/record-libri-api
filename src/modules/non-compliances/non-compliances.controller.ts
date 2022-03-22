@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Request } from '@nestjs/common';
 import { NonCompliancesDTO } from 'src/types/dto';
+import { Role } from '../auth/role.enum';
+import { Roles } from '../auth/roles.decorator';
 import { NonCompliancesService } from './non-compliances.service';
 
 @Controller('non-compliances')
@@ -17,21 +19,25 @@ export class NonCompliancesController {
     }
 
     @Get()
+    @Roles(Role.User)
     async getAll() {
         return await this.nonCompliancesService.getAll();
     }
 
     @Post()
+    @Roles(Role.User)
     async add(@Request() req, @Body() nc: NonCompliancesDTO) {
         return await this.nonCompliancesService.add(nc, req.user?.id);
     }
 
     @Patch(':id')
+    @Roles(Role.User)
     async patch(@Param('id') id: string, @Body() nc: NonCompliancesDTO) {
         return await this.nonCompliancesService.update(+id, nc);
     }
 
     @Delete(':id')
+    @Roles(Role.User)
     async delete(@Param('id') id: string) {
         return await this.nonCompliancesService.delete(+id);
     }

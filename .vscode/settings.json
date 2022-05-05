@@ -19,5 +19,20 @@
         "titleBar.inactiveBackground": "#83256199",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.remoteColor": "#1857a4"
+    "peacock.remoteColor": "#1857a4",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "libriliberi.bz.it",
+            "port": 3306,
+            "askForPassword": true,
+            "driver": "MySQL",
+            "name": "Libri Liberi",
+            "username": "iolanda",
+            "database": "information_schema"
+        }
+    ]
 }

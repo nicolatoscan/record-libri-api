@@ -18,6 +18,7 @@ export class NonCompliancesService extends APIService {
             Libraries: { select: { name: true } },
             Formats: { select: { name: true } },
             Tags: { select: { name: true } },
+            Users: { select: { username: true } },
         }
     }
 
@@ -56,6 +57,7 @@ export class NonCompliancesService extends APIService {
             dateAdded: nc.dateAdded,
             group: nc.group,
 
+            username: (nc as any).Users.username ?? '',
             recordNumber: (nc as any).Records?.number ?? 0,
             libraryName: (nc as any).Libraries?.name ?? '',
             formatName: (nc as any).Formats?.name ?? '',

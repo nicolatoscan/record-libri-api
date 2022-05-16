@@ -95,6 +95,16 @@ export class NonCompliancesService extends APIService {
         return res.map(x => this.mapNCToDTO(x));
     }
 
+    async getThisYear(): Promise<NonCompliancesDTO[]> {
+        const res = await this.prismaHandler(async () => {
+            return prisma.nonCompliances.findMany({
+                include: this.getIncludeFields(),
+                where: { dateAdded: { gte: new Date(new Date().getFullYear(), 0, 1) } }
+            });
+        });
+        return res.map(x => this.mapNCToDTO(x));
+    }
+
     async getMine(userId: number): Promise<NonCompliancesDTO[]> {
         const res = await this.prismaHandler(async () => {
             return prisma.nonCompliances.findMany({

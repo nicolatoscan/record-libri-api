@@ -24,6 +24,12 @@ export class NonCompliancesController {
         return await this.nonCompliancesService.getAll();
     }
 
+    @Get('year')
+    @Roles(Role.User)
+    async getThisYear() {
+        return await this.nonCompliancesService.getThisYear();
+    }
+
     @Get('mine')
     @Roles(Role.User)
     async getMine(@Request() req) {

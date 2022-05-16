@@ -21,6 +21,7 @@ model Users {
 model Libraries {
   id             Int              @id @default(autoincrement())
   name           String           @db.VarChar(250)
+  budget         Int?
   NonCompliances NonCompliances[]
   Records        Records[]
   Users          Users[]

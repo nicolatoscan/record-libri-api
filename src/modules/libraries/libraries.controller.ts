@@ -25,10 +25,21 @@ export class LibrariesController {
         return await this.librariesService.update(+id, l);
     }
 
+    @Patch(':id/budget')
+    @Roles(Role.Admin)
+    async patchBudget(@Param('id') id: string, @Body() b: { budget: string }) {
+        return await this.librariesService.updateBudget(+id, +b.budget);
+    }
+
     @Delete(':id')
     @Roles(Role.Admin)
     async delete(@Param('id') id: string) {
         return await this.librariesService.delete(+id);
     }
 
+    @Get('budget-used')
+    @Roles(Role.Admin)
+    async getRecordsDone() {
+        return await this.librariesService.getBudgetUsed();
+    }
 }

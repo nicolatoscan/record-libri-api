@@ -65,6 +65,7 @@ export class LibrariesService extends APIService {
             const budgetLUsed = await prisma.records.groupBy({
                 by: [ 'libraryId' ],
                 _count: { libraryId: true },
+                where: { dateAdded: { gte: new Date(new Date().getFullYear(), 0, 1) } }
             });
             return budgetLUsed.map(bl => ({
                 libraryId: bl.libraryId,

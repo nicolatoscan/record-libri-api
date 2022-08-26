@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import prisma from '../../common/prisma';
 import { APIService } from '../api.service';
 import * as Joi from 'joi';
-import { NonCompliancesDTO, UserDTO } from '../../types/dto';
+import { NCFilterDTO, NonCompliancesDTO, UserDTO } from '../../types/dto';
 import { NCGroup, NonCompliances } from '@prisma/client';
 import { Role } from '../auth/role.enum';
 
@@ -125,6 +125,52 @@ export class NonCompliancesService extends APIService {
             });
             return t.id;
         });
+    }
+
+    async getFiltredRecords(filters: NCFilterDTO, user: UserDTO): Promise<NonCompliancesDTO[]> {
+
+        switch (user.role) {
+            case Role.Commitente:
+                if (filters.libraryId !== user.libraryId) return [];
+                break;
+            
+            case Role.User:
+                if (filters.userId !== user.id) return [];
+                break;
+
+            case Role.Admin:
+                break;
+
+            default:
+                return [];
+        }
+
+        const where = {} as any;
+
+        if (filters.userId)
+            where.userId = filters.userId;
+
+        if (filters.libraryId) {
+            where.libraryId = filters.libraryId;
+        }
+
+        if (filters.startDate || filters.endDate) {
+            where.dateAdded = {};
+            if (filters.startDate)
+                where.dateAdded.gte = new Date(filters.startDate);
+            if (filters.endDate)
+                where.dateAdded.lte = new Date(filters.endDate);
+        }
+
+        const ncs = await this.prismaHandler(async () => {
+            return await prisma.nonCompliances.findMany({
+                where: where,
+                include: this.getIncludeFields(),
+                orderBy: { dateAdded: 'desc' },
+                take: 10000,
+            });
+        });
+        return ncs.map(r => this.mapNCToDTO(r));
     }
 
     async update(id: number, nc: NonCompliancesDTO, user: UserDTO) {

@@ -14,7 +14,6 @@ export class NonCompliancesService extends APIService {
 
     private getIncludeFields() {
         return {
-            Records: { select: { number: true, dateAdded: true } },
             Libraries: { select: { name: true } },
             Formats: { select: { name: true } },
             Tags: { select: { name: true } },
@@ -25,7 +24,7 @@ export class NonCompliancesService extends APIService {
     private validate(nc: NonCompliancesDTO, throwError = false): string | null {
         const schema = Joi.object({
             id: Joi.number().integer().min(1),
-            recordId: Joi.number().integer().min(1).required(),
+            recordNumber: Joi.number().integer().min(1).required(),
             userId: Joi.number().integer().min(1).required(),
             libraryId: Joi.number().integer().min(1).required(),
             formatId: Joi.number().integer().min(1).required(),
@@ -35,7 +34,6 @@ export class NonCompliancesService extends APIService {
             group: Joi.string().required().valid(...this.groupsList),
             dateAdded: Joi.date(),
 
-            recordNumber: Joi.number(),
             libraryName: Joi.string(),
             formatName: Joi.string(),
             tagName: Joi.string(),
@@ -47,7 +45,7 @@ export class NonCompliancesService extends APIService {
     private mapNCToDTO(nc: NonCompliances): NonCompliancesDTO {
         return {
             id: nc.id,
-            recordId: nc.recordId,
+            recordNumber: nc.recordNumber,
             userId: nc.userId,
             libraryId: nc.libraryId,
             formatId: nc.formatId,
@@ -58,7 +56,6 @@ export class NonCompliancesService extends APIService {
             group: nc.group,
 
             username: (nc as any).Users.username ?? '',
-            recordNumber: (nc as any).Records?.number ?? 0,
             libraryName: (nc as any).Libraries?.name ?? '',
             formatName: (nc as any).Formats?.name ?? '',
             tagName: (nc as any).Tags?.name ?? '',
@@ -68,7 +65,7 @@ export class NonCompliancesService extends APIService {
 
     private mapDTOToNC(nc: NonCompliancesDTO) {
         return {
-            recordId: nc.recordId,
+            recordNumber: nc.recordNumber,
             libraryId: nc.libraryId,
             formatId: nc.formatId,
             tagId: nc.tagId,
